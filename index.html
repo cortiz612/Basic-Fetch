@@ -4,11 +4,33 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 6: Fetch</title>
+    <title>Lab 6: Fetch - Customized</title>
     <script src="j/main.js" defer></script>
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
     <div id="container">Remote info goes here.</div>
+
+    <script>
+    
+        fetch('houses.json')
+            .then(response => response.json())
+            .then(data => {
+                const houseList = document.getElementById('container');
+
+                data.forEach(house => {
+                    let family = house.members.join(" | ");
+
+                  
+                    let objInfo = `<div class="house">
+                        <h2 class="house-name">${house.name}</h2>
+                        <p class="house-members">Members: ${family}</p>
+                    </div>`;
+
+                    houseList.innerHTML += objInfo;
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
 </body>
 </html>
-

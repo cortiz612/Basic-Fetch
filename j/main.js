@@ -1,33 +1,47 @@
 
-//This code does NOT create any global variables.
-//Promises can be chained together, with the previous promise
-// passing its results to the next one in the chain.
-// the format is: fetch().then().then().catch()
-//it's easier to read if we put each step in its own line,
-//that's why the periods start the then lines.
+function showHouse(houseName) {
+    // Hide all houses
+    const houses = document.querySelectorAll('.house');
+    houses.forEach(house => house.style.display = 'none');
 
-fetch("houses.json")
+    // Show the selected house
+    const selectedHouse = document.getElementById(houseName.toLowerCase());
+    if (selectedHouse) {
+        selectedHouse.style.display = 'block';
+    }
+}
+
+// Fetch and enhance the list using house.json data
+fetch('houses.json')
+    .then(response => response.json())
+    .then(data => {
+        const houseList = document.getElementById('container');
+
+        data.forEach(house => {
+            // Enhance the output with proper semantic HTML and classes
+            let objInfo = `<div class="house" id="${house.name.toLowerCase()}">
+                <h2 class="house-name">${house.name}</h2>
+                <p class="house-members">Members: ${house.members.join(" | ")}</p>
+            </div>`;
+
+            houseList.innerHTML += objInfo;
+        });
+    })
+    .catch(error => console.error('Error fetching data:', error));
+
+// Fetch and display colors
+fetch("https://www.colr.org/json/colors/random/7")
     .then((response) => response.json())
     .then((data) => {
-        //create a temp holder to append all the html generated inside the forEach iterator
-        let html = "";
+        const colorContainer = document.getElementById("color-container");
 
-        //the argument "house" passed to the arrow function
-        //holds each item in the array in turn.
-        data.forEach((house) => {
-            let family = house.members.join(" | ");
+        data.colors.forEach((color) => {
+            let colorHex = `#${color.hex}`;
+            let objInfo = `<div class="color" style="background-color: ${colorHex};">
+                <p class="color-hex">${colorHex}</p>
+            </div>`;
 
-            // generate the html snippet for one array item
-            //to be added to the "html" temp holder.
-            let objInfo = `<p class="house">${house.name}</p>
-        <p class="folks">${family}</p>`;
-            html += objInfo;
+            colorContainer.innerHTML += objInfo;
         });
-
-        //make a reference to the html container where
-        //the info will be displayed.
-        const container = document.querySelector("#container");
-        container.innerHTML = html;
     })
-    .catch((err) => console.log("Oops!", err));
-    //this only runs if there is an error during the above process
+    .catch((err) => console.error("Error fetching colors:", err));
